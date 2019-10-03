@@ -1,3 +1,1 @@
-import tensorflow as tf
-tf.enable_eager_execution()
-print( tf.constant('Hello from TensorFlow ' + tf.__version__) )
+nuijbuicv
