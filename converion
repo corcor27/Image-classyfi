@@ -1,0 +1,5 @@
+from pillow import fromarray
+
+ds = read_file('file-in.dcm')
+im = fromarray(ds.pixel_array)
+im.save('Test-1.jpg')
