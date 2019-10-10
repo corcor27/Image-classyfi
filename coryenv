@@ -1,5 +1,5 @@
-print (enviroment activate for you good sir!)
-
+#!/bin/bash
+echo -e "Usage of the feed script\
 
 anaconda3-launch -env coryenv bash
 
