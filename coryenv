@@ -1,1 +1,3 @@
 anaconda3-launch -env coryenv bash
+
+print("enviroment activate for you good sir!")
