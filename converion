@@ -1,5 +1,14 @@
-from pillow import fromarray
+import cv2
+import os
+import pydicom
 
-ds = read_file('file-in.dcm')
-im = fromarray(ds.pixel_array)
-im.save('Test-1.jpg')
+inputdir = '../home/cot12/Documents/1.2.840.113681.2229466322.945.3528952636.137.1.dcm/'
+outdir = './'
+#os.mkdir(outdir)
+
+test_list = [ f for f in  os.listdir(inputdir)]
+
+for f in test_list[:10]:   # remove "[:10]" to convert all images 
+    ds = pydicom.read_file(inputdir + f) # read dicom image
+    img = ds.pixel_array # get image array
+    cv2.imwrite(outdir + f.replace('.dcm','.png'),img) # write png image
