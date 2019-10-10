@@ -1,14 +1,19 @@
-import cv2
-import os
-import pydicom
+from PIL import Image
 
-inputdir = '../home/cot12/Documents/1.2.840.113681.2229466322.945.3528952636.137.1.dcm/'
-outdir = './'
-#os.mkdir(outdir)
+ 
 
-test_list = [ f for f in  os.listdir(inputdir)]
+# Create an Image object from an Image
 
-for f in test_list[:10]:   # remove "[:10]" to convert all images 
-    ds = pydicom.read_file(inputdir + f) # read dicom image
-    img = ds.pixel_array # get image array
-    cv2.imwrite(outdir + f.replace('.dcm','.png'),img) # write png image
+imageObject  = Image.open("./image_10-10-2019_0.jpg")
+
+ 
+
+# Crop the iceberg portion
+
+cropped     = imageObject.crop((2388,2540,586,895))
+
+ 
+
+# Display the cropped portion
+
+cropped.show()
