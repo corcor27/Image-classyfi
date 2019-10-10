@@ -1,4 +1,4 @@
-print "enviroment activate for you good sir!"
+print (enviroment activate for you good sir!)
 
 
 anaconda3-launch -env coryenv bash
