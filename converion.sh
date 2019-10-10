@@ -4,7 +4,7 @@ from PIL import Image
 
 # Create an Image object from an Image
 
-imageObject  = Image.open("/home/cot12/Documents/image_10-10-2019_0.jpg")
+imageObject  = Image.open(/home/cot12/Documents/image_10-10-2019_0.jpg)
 
  
 
