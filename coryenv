@@ -1,5 +1,5 @@
 #!/bin/bash
-echo -e "Usage of the feed script\
+echo Usage of the feed script
 
 anaconda3-launch -env coryenv bash
 
