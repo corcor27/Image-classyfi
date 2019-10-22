@@ -24,8 +24,16 @@ def gauss_blur(size, sigma):
 #print (gauss_blur(8,5))
 #plt.imshow(filter_image_Gblur3, cmap ='gray')
 #cv2.imwrite('/home/cot12/Documents/jup-pads/sky-2.jpg', filter_image_Gblur1)
+"""
+image sizing
+"""
 
 doubled = cv2.resize(Beginning_image, None, fx = 2 , fy = 2)
 Normal = cv2.resize(doubled, None, fx = 2 , fy = 2)
 Half = cv2.resize(Normal, None, fx = 2 , fy = 2)
 Quarter = cv2.resize(Half, None, fx = 2 , fy = 2)
+
+pyrlvl1 = np.zeros((doubled.shape[0], doubled.shape[1]))
+pyrlvl2 = np.zeros((Normal.shape[0], Normal.shape[1]))
+pyrlvl3 = np.zeros((Half.shape[0], Half.shape[1]))
+pyrlvl4 = np.zeros((Quarter.shape[0], Quarter.shape[1]))
