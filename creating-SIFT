@@ -1,0 +1,31 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from numpy.linalg import norm
+import numpy.linalg
+
+
+image = '/home/cot12/Documents/jup-pads/sky.jpeg'
+Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
+
+s = 1 #sigma value
+k = 8  #size
+def gauss_blur(size, sigma):
+
+    """Function to mimic the 'fspecial' gaussian MATLAB function
+    """
+    x, y = numpy.mgrid[-size//2 + 1:size//2 + 1, -size//2 + 1:size//2 + 1]
+    g = numpy.exp(-((x**2 + y**2)/(2.0*sigma**2)))
+    return g/g.sum()
+
+
+#filter_image_Gblur1 = cv2.filter2D(Beginning_image, -1, gauss_blur(s,k))
+#print (gauss_blur(8,5))
+#plt.imshow(filter_image_Gblur3, cmap ='gray')
+#cv2.imwrite('/home/cot12/Documents/jup-pads/sky-2.jpg', filter_image_Gblur1)
+
+doubled = cv2.resize(Beginning_image, None, fx = 2 , fy = 2)
+Normal = cv2.resize(doubled, None, fx = 2 , fy = 2)
+Half = cv2.resize(Normal, None, fx = 2 , fy = 2)
+Quarter = cv2.resize(Half, None, fx = 2 , fy = 2)
