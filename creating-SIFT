@@ -37,3 +37,8 @@ pyrlvl1 = np.zeros((doubled.shape[0], doubled.shape[1]))
 pyrlvl2 = np.zeros((Normal.shape[0], Normal.shape[1]))
 pyrlvl3 = np.zeros((Half.shape[0], Half.shape[1]))
 pyrlvl4 = np.zeros((Quarter.shape[0], Quarter.shape[1]))
+
+def construct_pyramid ():
+    for i in the range(0,6):
+        pylvl1[:,;,i] = cv2.filter2D(Beginning_image, -1, gauss_blur(s,k))
+    return
