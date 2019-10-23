@@ -2,43 +2,77 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-from numpy.linalg import norm
-import numpy.linalg
+
 
 
 image = '/home/cot12/Documents/jup-pads/sky.jpeg'
 Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
 
-s = 1 #sigma value
+s = 2 #sigma value
 k = 8  #size
+c = -1
+threshold = 1
 def gauss_blur(size, sigma):
 
     """Function to mimic the 'fspecial' gaussian MATLAB function
     """
-    x, y = numpy.mgrid[-size//2 + 1:size//2 + 1, -size//2 + 1:size//2 + 1]
-    g = numpy.exp(-((x**2 + y**2)/(2.0*sigma**2)))
+    x, y = np.mgrid[-size//2 + 1:size//2 + 1, -size//2 + 1:size//2 + 1]
+    g = np.exp(-((x**2 + y**2)/(2.0*sigma**2)))
     return g/g.sum()
 
 
-#filter_image_Gblur1 = cv2.filter2D(Beginning_image, -1, gauss_blur(s,k))
+#pyrlvl[0] = cv2.filter2D(Beginning_image,c, gauss_blur(s,k))
 #print (gauss_blur(8,5))
 #plt.imshow(filter_image_Gblur3, cmap ='gray')
 #cv2.imwrite('/home/cot12/Documents/jup-pads/sky-2.jpg', filter_image_Gblur1)
-"""
-image sizing
-"""
-
+#create image size variant
+#create image size variant
 doubled = cv2.resize(Beginning_image, None, fx = 2 , fy = 2)
-Normal = cv2.resize(doubled, None, fx = 2 , fy = 2)
-Half = cv2.resize(Normal, None, fx = 2 , fy = 2)
-Quarter = cv2.resize(Half, None, fx = 2 , fy = 2)
-
-pyrlvl1 = np.zeros((doubled.shape[0], doubled.shape[1]))
-pyrlvl2 = np.zeros((Normal.shape[0], Normal.shape[1]))
-pyrlvl3 = np.zeros((Half.shape[0], Half.shape[1]))
-pyrlvl4 = np.zeros((Quarter.shape[0], Quarter.shape[1]))
-
-def construct_pyramid ():
-    for i in the range(0,6):
-        pylvl1[:,;,i] = cv2.filter2D(Beginning_image, -1, gauss_blur(s,k))
-    return
+normal = cv2.resize(doubled, None, fx = 2 , fy = 2)
+half = cv2.resize(normal, None, fx = 2 , fy = 2)
+quarter = cv2.resize(half, None, fx = 2 , fy = 2)
+q
+#create zero layer for pyramid
+pyrlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],6))
+pyrlvl2 = np.zeros((normal.shape[0], normal.shape[1],6))
+pyrlvl3 = np.zeros((half.shape[0], half.shape[1],6))
+pyrlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],6))
+# create our Gaussian pyramid
+​
+Gblur = gauss_blur(s,k)
+for i in range(0,6):
+    if i == 0:
+        pyrlvl1[:,:,i] = cv2.filter2D(doubled,c, Gblur)
+        pyrlvl2[:,:,i] = cv2.filter2D(normal,c, Gblur)
+        pyrlvl3[:,:,i] = cv2.filter2D(half,c, Gblur)
+        pyrlvl4[:,:,i] = cv2.filter2D(quarter,c, Gblur)
+    else:
+        pyrlvl1[:,:,i] = cv2.filter2D(pyrlvl1[:,:,i-1],c, Gblur)
+        pyrlvl2[:,:,i] = cv2.filter2D(pyrlvl2[:,:,i-1],c, Gblur)
+        pyrlvl3[:,:,i] = cv2.filter2D(pyrlvl3[:,:,i-1],c, Gblur)
+        pyrlvl4[:,:,i] = cv2.filter2D(pyrlvl4[:,:,i-1],c, Gblur)
+        
+#create zero layer for DoG images 
+DoGlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],5))
+DoGlvl2 = np.zeros((normal.shape[0], normal.shape[1],5))
+DoGlvl3 = np.zeros((half.shape[0], half.shape[1],5))
+DoGlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],5))
+# create DoG layer
+for i in range (0,5):
+    DoGlvl1[:,:,i] = pyrlvl1[:,:,i+1] - pyrlvl1[:,:,i]
+    DoGlvl2[:,:,i] = pyrlvl2[:,:,i+1] - pyrlvl2[:,:,i]
+    DoGlvl3[:,:,i] = pyrlvl3[:,:,i+1] - pyrlvl3[:,:,i]
+    DoGlvl4[:,:,i] = pyrlvl4[:,:,i+1] - pyrlvl4[:,:,i]
+doubled.shape[1]
+# create zero layer to store extrema location
+Exlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],3))
+Exlvl2 = np.zeros((normal.shape[0], normal.shape[1],3))
+Exlvl3 = np.zeros((half.shape[0], half.shape[1],3))
+Exlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],3))
+for i in range(1,4):
+    for j in range(1, doubled.shape[0] -1):
+        for k in range(1, doubled.shape[1]-1):
+            for di in range(-1, 1):
+                for dj in range(-1,1):
+                    for dk in range(-1,1):
+                        
