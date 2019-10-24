@@ -25,20 +25,21 @@ def gauss_blur(size, sigma):
 #print (gauss_blur(8,5))
 #plt.imshow(filter_image_Gblur3, cmap ='gray')
 #cv2.imwrite('/home/cot12/Documents/jup-pads/sky-2.jpg', filter_image_Gblur1)
-#create image size variant
+
 #create image size variant
 doubled = cv2.resize(Beginning_image, None, fx = 2 , fy = 2)
 normal = cv2.resize(doubled, None, fx = 2 , fy = 2)
 half = cv2.resize(normal, None, fx = 2 , fy = 2)
 quarter = cv2.resize(half, None, fx = 2 , fy = 2)
-q
+
 #create zero layer for pyramid
 pyrlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],6))
 pyrlvl2 = np.zeros((normal.shape[0], normal.shape[1],6))
 pyrlvl3 = np.zeros((half.shape[0], half.shape[1],6))
 pyrlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],6))
+
 # create our Gaussian pyramid
-​
+
 Gblur = gauss_blur(s,k)
 for i in range(0,6):
     if i == 0:
@@ -51,19 +52,22 @@ for i in range(0,6):
         pyrlvl2[:,:,i] = cv2.filter2D(pyrlvl2[:,:,i-1],c, Gblur)
         pyrlvl3[:,:,i] = cv2.filter2D(pyrlvl3[:,:,i-1],c, Gblur)
         pyrlvl4[:,:,i] = cv2.filter2D(pyrlvl4[:,:,i-1],c, Gblur)
-        
+
 #create zero layer for DoG images 
 DoGlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],5))
 DoGlvl2 = np.zeros((normal.shape[0], normal.shape[1],5))
 DoGlvl3 = np.zeros((half.shape[0], half.shape[1],5))
 DoGlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],5))
+
+
 # create DoG layer
 for i in range (0,5):
     DoGlvl1[:,:,i] = pyrlvl1[:,:,i+1] - pyrlvl1[:,:,i]
     DoGlvl2[:,:,i] = pyrlvl2[:,:,i+1] - pyrlvl2[:,:,i]
     DoGlvl3[:,:,i] = pyrlvl3[:,:,i+1] - pyrlvl3[:,:,i]
     DoGlvl4[:,:,i] = pyrlvl4[:,:,i+1] - pyrlvl4[:,:,i]
-doubled.shape[1]
+    
+    
 # create zero layer to store extrema location
 Exlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],3))
 Exlvl2 = np.zeros((normal.shape[0], normal.shape[1],3))
