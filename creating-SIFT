@@ -297,8 +297,8 @@ for i in range(0,3):
 for i in range(0,3):
     for j in range(0, quarter.shape[0]-1):
         for k in range(0, quarter.shape[1]-1):
-            Grmaglvl3[j,k,i] = (((quarter[j+1,k] - quarter[j-1,k])**2) + ((quarter[j,k+1] - quarter[j,k-1])**2))**0.5
-            Orientlvl3[j,k,i] = np.arctan((quarter[j,k+1] - quarter[j,k-1]) / (quarter[j+1,k] - quarter[j-1,k]))
+            Grmaglvl4[j,k,i] = (((quarter[j+1,k] - quarter[j-1,k])**2) + ((quarter[j,k+1] - quarter[j,k-1])**2))**0.5
+            Orientlvl4[j,k,i] = np.arctan((quarter[j,k+1] - quarter[j,k-1]) / (quarter[j+1,k] - quarter[j-1,k]))
 
             
 extr_sum = np.sum(Exlvl1) + np.sum(Exlvl2) + np.sum(Exlvl3) + np.sum(Exlvl4)
