@@ -311,7 +311,7 @@ for i in range(0, 3):
         for j in range(0, doubled.shape[0] - 1):
             for k in range(0, doubled.shape[1] - 1):
                 if Exlvl1[j, k, i] == 1:
-                    gaussian_window = np.random.multivariate_normal(mean=[j, k], cov=(1.5 * s), (k,k)) 
+                    gaussian_window = np.random.multivariate_normal(mean=[j, k], V) 
                     two_sd = np.floor(2 * 1.5 * s)
                     orient_hist = np.zeros([36,1])
                     for x in range(int(-1 * two_sd * 2), int(two_sd * 2) + 1):
