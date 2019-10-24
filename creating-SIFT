@@ -69,10 +69,192 @@ Exlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],3))
 Exlvl2 = np.zeros((normal.shape[0], normal.shape[1],3))
 Exlvl3 = np.zeros((half.shape[0], half.shape[1],3))
 Exlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],3))
+
+
 for i in range(1,4):
     for j in range(1, doubled.shape[0] -1):
         for k in range(1, doubled.shape[1]-1):
-            for di in range(-1, 1):
+            if np.absolute(DoGlvl1[j, k, i]) < threshold:
+                continue
+            maxima = DoGlvl1[j,k,i] > 0
+            minima = DoGlvl1[j,k,i] < 0
+            for di in range(-1,1):
                 for dj in range(-1,1):
                     for dk in range(-1,1):
+                        if di == 0 and dj ==0 and dk == 0:
+                            continue
+                        maxima = maxima and (DoGlvl1[j, k, i] > DoGlvl1[j + dj, k + dk, i + di])
+                        minima = minima and (DoGlvl1[j, k, i] < DoGlvl1[j + dj, k + dk, i + di])
                         
+                        if not maxima and not minima:
+                            break
+
+                    if not maxima and not minima:
+                        break
+
+                if not maxima and not minima:
+                    break
+            if maxima or minima:
+                dx = (DoGlvl1[j, k+1, i] - DoGlvl1[j, k-1, i]) * 0.5 / 255
+                dy = (DoGlvl1[j+1, k, i] - DoGlvl1[j-1, k, i]) * 0.5 / 255
+                dz = (DoGlvl1[j, k, i+1] - DoGlvl1[j, k, i-1]) * 0.5 / 255
+                dxx = (DoGlvl1[j, k+1, i] + DoGlvl1[j, k-1, i] - 2 * DoGlvl1[j, k, i]) * 1.0 / 255        
+                dyy = (DoGlvl1[j+1, k, i] + DoGlvl1[j-1, k, i] - 2 * DoGlvl1[j, k, i]) * 1.0 / 255          
+                dzz = (DoGlvl1[j, k, i+1] + DoGlvl1[j, k, i-1] - 2 * DoGlvl1[j, k, i]) * 1.0 / 255
+                dxy = (DoGlvl1[j+1, k+1, i] - DoGlvl1[j+1, k-1, i] - DoGlvl1[j-1, k+1, i] + DoGlvl1[j-1, k-1, i]) * 0.25 / 255 
+                dxz = (DoGlvl1[j, k+1, i+1] - DoGlvl1[j, k-1, i+1] - DoGlvl1[j, k+1, i-1] + DoGlvl1[j, k-1, i-1]) * 0.25 / 255 
+                dyz = (DoGlvl1[j+1, k, i+1] - DoGlvl1[j-1, k, i+1] - DoGlvl1[j+1, k, i-1] + DoGlvl1[j-1, k, i-1]) * 0.25 / 255  
+                
+                
+                diff = np.matrix([[dx], [dy], [dz]])
+                doublediff = np.matrix([[dxx, dxy, dxz], [dxy, dyy, dyz], [dxz, dyz, dzz]]) 
+                least_sq = np.linalg.lstsq(diff, doublediff)[0] #function finds the sum of least squares 
+                # least_sq = [S1,S2,S3]
+                least_diff = DoGlvl1[j, k, i] + 0.5 * np.dot(diff, least_sq)
+                r = 10.0
+                if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(least_diff) > 0.03]: 
+                    Exlvl1[j, k, i - 1] = 1
+
+
+for i in range(1,4):
+    for j in range(1, normal.shape[0] -1):
+        for k in range(1, normal.shape[1]-1):
+            if np.absolute(DoGlvl2[j, k, i]) < threshold:
+                continue
+            maxima = DoGlvl2[j,k,i] > 0
+            minima = DoGlvl2[j,k,i] < 0
+            for di in range(-1,1):
+                for dj in range(-1,1):
+                    for dk in range(-1,1):
+                        if di == 0 and dj ==0 and dk == 0:
+                            continue
+                        maxima = maxima and (DoGlvl2[j, k, i] > DoGlvl2[j + dj, k + dk, i + di])
+                        minima = minima and (DoGlvl2[j, k, i] < DoGlvl2[j + dj, k + dk, i + di])
+                        
+                        if not maxima and not minima:
+                            break
+
+                    if not maxima and not minima:
+                        break
+
+                if not maxima and not minima:
+                    break
+            if maxima or minima:
+                dx = (DoGlvl2[j, k+1, i] - DoGlvl2[j, k-1, i]) * 0.5 / 255
+                dy = (DoGlvl2[j+1, k, i] - DoGlvl2[j-1, k, i]) * 0.5 / 255
+                dz = (DoGlvl2[j, k, i+1] - DoGlvl2[j, k, i-1]) * 0.5 / 255
+                dxx = (DoGlvl2[j, k+1, i] + DoGlvl2[j, k-1, i] - 2 * DoGlvl2[j, k, i]) * 1.0 / 255        
+                dyy = (DoGlvl2[j+1, k, i] + DoGlvl2[j-1, k, i] - 2 * DoGlvl2[j, k, i]) * 1.0 / 255          
+                dzz = (DoGlvl2[j, k, i+1] + DoGlvl2[j, k, i-1] - 2 * DoGlvl2[j, k, i]) * 1.0 / 255
+                dxy = (DoGlvl2[j+1, k+1, i] - DoGlvl2[j+1, k-1, i] - DoGlvl2[j-1, k+1, i] + DoGlvl2[j-1, k-1, i]) * 0.25 / 255 
+                dxz = (DoGlvl2[j, k+1, i+1] - DoGlvl2[j, k-1, i+1] - DoGlvl2[j, k+1, i-1] + DoGlvl2[j, k-1, i-1]) * 0.25 / 255 
+                dyz = (DoGlvl2[j+1, k, i+1] - DoGlvl2[j-1, k, i+1] - DoGlvl2[j+1, k, i-1] + DoGlvl2[j-1, k, i-1]) * 0.25 / 255  
+                
+                
+                diff = np.matrix([[dx], [dy], [dz]])
+                doublediff = np.matrix([[dxx, dxy, dxz], [dxy, dyy, dyz], [dxz, dyz, dzz]]) 
+                least_sq = np.linalg.lstsq(diff, doublediff)[0] #function finds the sum of least squares 
+                # least_sq = [S1,S2,S3]
+                least_diff = DoGlvl2[j, k, i] + 0.5 * np.dot(diff, least_sq)
+                r = 10.0
+                if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(least_diff) > 0.03]: 
+                    Exlvl2[j, k, i - 1] = 1
+                 
+
+for i in range(1,4):
+    for j in range(1, half.shape[0] -1):
+        for k in range(1, half.shape[1]-1):
+            if np.absolute(DoGlvl3[j, k, i]) < threshold:
+                continue
+            maxima = DoGlvl3[j,k,i] > 0
+            minima = DoGlvl3[j,k,i] < 0
+            for di in range(-1,1):
+                for dj in range(-1,1):
+                    for dk in range(-1,1):
+                        if di == 0 and dj ==0 and dk == 0:
+                            continue
+                        maxima = maxima and (DoGlvl3[j, k, i] > DoGlvl3[j + dj, k + dk, i + di])
+                        minima = minima and (DoGlvl3[j, k, i] < DoGlvl3[j + dj, k + dk, i + di])
+                        
+                        if not maxima and not minima:
+                            break
+
+                    if not maxima and not minima:
+                        break
+
+                if not maxima and not minima:
+                    break
+            if maxima or minima:
+                dx = (DoGlvl3[j, k+1, i] - DoGlvl3[j, k-1, i]) * 0.5 / 255
+                dy = (DoGlvl3[j+1, k, i] - DoGlvl3[j-1, k, i]) * 0.5 / 255
+                dz = (DoGlvl3[j, k, i+1] - DoGlvl3[j, k, i-1]) * 0.5 / 255
+                dxx = (DoGlvl3[j, k+1, i] + DoGlvl3[j, k-1, i] - 2 * DoGlvl3[j, k, i]) * 1.0 / 255        
+                dyy = (DoGlvl3[j+1, k, i] + DoGlvl3[j-1, k, i] - 2 * DoGlvl3[j, k, i]) * 1.0 / 255          
+                dzz = (DoGlvl3[j, k, i+1] + DoGlvl3[j, k, i-1] - 2 * DoGlvl3[j, k, i]) * 1.0 / 255
+                dxy = (DoGlvl3[j+1, k+1, i] - DoGlvl3[j+1, k-1, i] - DoGlvl3[j-1, k+1, i] + DoGlvl3[j-1, k-1, i]) * 0.25 / 255 
+                dxz = (DoGlvl3[j, k+1, i+1] - DoGlvl3[j, k-1, i+1] - DoGlvl3[j, k+1, i-1] + DoGlvl3[j, k-1, i-1]) * 0.25 / 255 
+                dyz = (DoGlvl3[j+1, k, i+1] - DoGlvl3[j-1, k, i+1] - DoGlvl3[j+1, k, i-1] + DoGlvl3[j-1, k, i-1]) * 0.25 / 255  
+                
+                
+                diff = np.matrix([[dx], [dy], [dz]])
+                doublediff = np.matrix([[dxx, dxy, dxz], [dxy, dyy, dyz], [dxz, dyz, dzz]]) 
+                least_sq = np.linalg.lstsq(diff, doublediff)[0] #function finds the sum of least squares 
+                # least_sq = [S1,S2,S3]
+                least_diff = DoGlvl3[j, k, i] + 0.5 * np.dot(diff, least_sq)
+                r = 10.0
+                if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(least_diff) > 0.03]: 
+                    Exlvl3[j, k, i - 1] = 1
+                                 
+                
+                
+for i in range(1,4):
+    for j in range(1, quarter.shape[0] -1):
+        for k in range(1, quarter.shape[1]-1):
+            if np.absolute(DoGlvl4[j, k, i]) < threshold:
+                continue
+            maxima = DoGlvl4[j,k,i] > 0
+            minima = DoGlvl4[j,k,i] < 0
+            for di in range(-1,1):
+                for dj in range(-1,1):
+                    for dk in range(-1,1):
+                        if di == 0 and dj ==0 and dk == 0:
+                            continue
+                        maxima = maxima and (DoGlvl4[j, k, i] > DoGlvl4[j + dj, k + dk, i + di])
+                        minima = minima and (DoGlvl4[j, k, i] < DoGlvl4[j + dj, k + dk, i + di])
+                        
+                        if not maxima and not minima:
+                            break
+
+                    if not maxima and not minima:
+                        break
+
+                if not maxima and not minima:
+                    break
+            if maxima or minima:
+                dx = (DoGlvl4[j, k+1, i] - DoGlvl4[j, k-1, i]) * 0.5 / 255
+                dy = (DoGlvl4[j+1, k, i] - DoGlvl4[j-1, k, i]) * 0.5 / 255
+                dz = (DoGlvl4[j, k, i+1] - DoGlvl4[j, k, i-1]) * 0.5 / 255
+                dxx = (DoGlvl4[j, k+1, i] + DoGlvl4[j, k-1, i] - 2 * DoGlvl4[j, k, i]) * 1.0 / 255        
+                dyy = (DoGlvl4[j+1, k, i] + DoGlvl4[j-1, k, i] - 2 * DoGlvl4[j, k, i]) * 1.0 / 255          
+                dzz = (DoGlvl4[j, k, i+1] + DoGlvl4[j, k, i-1] - 2 * DoGlvl4[j, k, i]) * 1.0 / 255
+                dxy = (DoGlvl4[j+1, k+1, i] - DoGlvl4[j+1, k-1, i] - DoGlvl4[j-1, k+1, i] + DoGlvl4[j-1, k-1, i]) * 0.25 / 255 
+                dxz = (DoGlvl4[j, k+1, i+1] - DoGlvl4[j, k-1, i+1] - DoGlvl4[j, k+1, i-1] + DoGlvl4[j, k-1, i-1]) * 0.25 / 255 
+                dyz = (DoGlvl4[j+1, k, i+1] - DoGlvl4[j-1, k, i+1] - DoGlvl4[j+1, k, i-1] + DoGlvl4[j-1, k, i-1]) * 0.25 / 255  
+                
+                
+                diff = np.matrix([[dx], [dy], [dz]])
+                doublediff = np.matrix([[dxx, dxy, dxz], [dxy, dyy, dyz], [dxz, dyz, dzz]]) 
+                least_sq = np.linalg.lstsq(diff, doublediff)[0] #function finds the sum of least squares 
+                # least_sq = [S1,S2,S3]
+                least_diff = DoGlvl4[j, k, i] + 0.5 * np.dot(diff, least_sq)
+                r = 10.0
+                if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(least_diff) > 0.03]: 
+                    Exlvl4[j, k, i - 1] = 1
+                 
+
+
+                                                 
+print("Number of extrema in first octave: %d" % np.sum(Exlvl1))
+print("Number of extrema in second octave: %d" % np.sum(Exlvl2))
+print("Number of extrema in third octave: %d" % np.sum(Exlvl3))
+print("Number of extrema in fourth octave: %d" % np.sum(Exlvl4))
