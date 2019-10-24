@@ -306,3 +306,124 @@ keypoints = np.zeros((extr_sum, 4))
 
 print("Calculating keypoint orientations...")
 count = 0
+
+for i in range(0, 3):
+        for j in range(0, doubled.shape[0] - 1):
+            for k in range(0, doubled.shape[1] - 1):
+                if Exlvl1[j, k, i] == 1:
+                    gaussian_window = np.random.multivariate_normal(mean=[j, k], cov=(1.5 * s), (k,k)) 
+                    two_sd = np.floor(2 * 1.5 * s)
+                    orient_hist = np.zeros([36,1])
+                    for x in range(int(-1 * two_sd * 2), int(two_sd * 2) + 1):
+                        ylim = int((((two_sd * 2) ** 2) - (np.absolute(x) ** 2)) ** 0.5)
+                        for y in range(-1 * ylim, ylim + 1):
+                            if j + x < 0 or j + x > doubled.shape[0] - 1 or k + y < 0 or k + y > doubled.shape[1] - 1:
+                                continue
+                            weight = Grmaglvl1[j + x, k + y, i] * gaussian_window.pdf([j + x, k + y])
+                            bin_idx = np.clip(np.floor(Orientlvl1[j + x, k + y, i]), 0, 35)
+                            orient_hist[np.floor(bin_idx)] += weight 
+            
+                            
+                        maxval = np.amax(orient_hist)
+                        maxidx = np.argmax(orient_hist)
+                        keypoints[count, :] = np.array([j, k, s, maxidx])
+                        count += 1
+                        orient_hist[maxidx] = 0
+                        newmaxval = np.amax(orient_hist)
+                        while newmaxval > 0.8 * maxval:
+                            newmaxidx = np.argmax(orient_hist)
+                            np.append(keypoints, np.array([[j, k,s, newmaxidx]]), axis=0)
+                            orient_hist[newmaxidx] = 0
+                            newmaxval = np.amax(orient_hist)
+
+                  
+for i in range(0, 3):
+        for j in range(0, normal.shape[0] - 1):
+            for k in range(0, normal.shape[1] - 1):
+                if Exlvl2[j, k, i] == 1:
+                    gaussian_window = np.random.multivariate_normal(mean=[j, k], cov=(1.5 * s), (k,k)) 
+                    two_sd = np.floor(2 * 1.5 * s)
+                    orient_hist = np.zeros([36,1])
+                    for x in range(int(-1 * two_sd * 2), int(two_sd * 2) + 1):
+                        ylim = int((((two_sd * 2) ** 2) - (np.absolute(x) ** 2)) ** 0.5)
+                        for y in range(-1 * ylim, ylim + 1):
+                            if j + x < 0 or j + x > normal.shape[0] - 1 or k + y < 0 or k + y > normal.shape[1] - 1:
+                                continue
+                            weight = Grmaglvl2[j + x, k + y, i] * gaussian_window.pdf([j + x, k + y])
+                            bin_idx = np.clip(np.floor(Orientlvl2[j + x, k + y, i]), 0, 35)
+                            orient_hist[np.floor(bin_idx)] += weight 
+            
+                            
+                        maxval = np.amax(orient_hist)
+                        maxidx = np.argmax(orient_hist)
+                        keypoints[count, :] = np.array([j, k, s, maxidx])
+                        count += 1
+                        orient_hist[maxidx] = 0
+                        newmaxval = np.amax(orient_hist)
+                        while newmaxval > 0.8 * maxval:
+                            newmaxidx = np.argmax(orient_hist)
+                            np.append(keypoints, np.array([[j, k, s, newmaxidx]]), axis=0)
+                            orient_hist[newmaxidx] = 0
+                            newmaxval = np.amax(orient_hist)
+
+                            
+for i in range(0, 3):
+        for j in range(0, half.shape[0] - 1):
+            for k in range(0, half.shape[1] - 1):
+                if Exlvl3[j, k, i] == 1:
+                    gaussian_window = np.random.multivariate_normal(mean=[j, k], cov=(1.5 * s), (k,k)) 
+                    two_sd = np.floor(2 * 1.5 * s)
+                    orient_hist = np.zeros([36,1])
+                    for x in range(int(-1 * two_sd * 2), int(two_sd * 2) + 1):
+                        ylim = int((((two_sd * 2) ** 2) - (np.absolute(x) ** 2)) ** 0.5)
+                        for y in range(-1 * ylim, ylim + 1):
+                            if j + x < 0 or j + x > half.shape[0] - 1 or k + y < 0 or k + y > half.shape[1] - 1:
+                                continue
+                            weight = Grmaglvl3[j + x, k + y, i] * gaussian_window.pdf([j + x, k + y])
+                            bin_idx = np.clip(np.floor(Orientlvl3[j + x, k + y, i]), 0, 35)
+                            orient_hist[np.floor(bin_idx)] += weight 
+            
+                            
+                        maxval = np.amax(orient_hist)
+                        maxidx = np.argmax(orient_hist)
+                        keypoints[count, :] = np.array([j, k, s, maxidx])
+                        count += 1
+                        orient_hist[maxidx] = 0
+                        newmaxval = np.amax(orient_hist)
+                        while newmaxval > 0.8 * maxval:
+                            newmaxidx = np.argmax(orient_hist)
+                            np.append(keypoints, np.array([[j, k, s, newmaxidx]]), axis=0)
+                            orient_hist[newmaxidx] = 0
+                            newmaxval = np.amax(orient_hist)
+                
+for i in range(0, 3):
+        for j in range(0, quarter.shape[0] - 1):
+            for k in range(0, quarter.shape[1] - 1):
+                if Exlvl4[j, k, i] == 1:
+                    gaussian_window = multivariate_normal(mean=[j, k], cov=(1.5 * s), (k,k)) 
+                    two_sd = np.floor(2 * 1.5 * s)
+                    orient_hist = np.zeros([36,1])
+                    for x in range(int(-1 * two_sd * 2), int(two_sd * 2) + 1):
+                        ylim = int((((two_sd * 2) ** 2) - (np.absolute(x) ** 2)) ** 0.5)
+                        for y in range(-1 * ylim, ylim + 1):
+                            if j + x < 0 or j + x > quarter.shape[0] - 1 or k + y < 0 or k + y > quarter.shape[1] - 1:
+                                continue
+                            weight = Grmaglvl4[j + x, k + y, i] * gaussian_window.pdf([j + x, k + y])
+                            bin_idx = np.clip(np.floor(Orientlvl4[j + x, k + y, i]), 0, 35)
+                            orient_hist[np.floor(bin_idx)] += weight 
+            
+                            
+                        maxval = np.amax(orient_hist)
+                        maxidx = np.argmax(orient_hist)
+                        keypoints[count, :] = np.array([j, k, s, maxidx])
+                        count += 1
+                        orient_hist[maxidx] = 0
+                        newmaxval = np.amax(orient_hist)
+                        while newmaxval > 0.8 * maxval:
+                            newmaxidx = np.argmax(orient_hist)
+                            np.append(keypoints, np.array([[j, k,s, newmaxidx]]), axis=0)
+                            orient_hist[newmaxidx] = 0
+                            newmaxval = np.amax(orient_hist)
+                            
+            
+print("Calculating descriptor...")
