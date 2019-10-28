@@ -3,15 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+image = r"C:\Users\cory\Documents\flower.jpeg"
 
-
-image = '/home/cot12/Documents/jup-pads/sky.jpeg'
 Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
 
-s = 2 #sigma value
-k = 8  #size
+s = 1.6 #sigma value
+k = 2 ** (1.0 / s) #kernals
+v = 4 #size
 c = -1
 threshold = 1
+
 def gauss_blur(size, sigma):
 
     """Function to mimic the 'fspecial' gaussian MATLAB function
@@ -39,19 +40,12 @@ pyrlvl3 = np.zeros((half.shape[0], half.shape[1],6))
 pyrlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],6))
 
 # create our Gaussian pyramid
-
-Gblur = gauss_blur(s,k)
+kvector = np.array([s, k*s, s*(k**2), s*(k**3), s*(k**4), s*(k**5),s*(k**6), s*(k**7), s*(k**8)])
 for i in range(0,6):
-    if i == 0:
-        pyrlvl1[:,:,i] = cv2.filter2D(doubled,c, Gblur)
-        pyrlvl2[:,:,i] = cv2.filter2D(normal,c, Gblur)
-        pyrlvl3[:,:,i] = cv2.filter2D(half,c, Gblur)
-        pyrlvl4[:,:,i] = cv2.filter2D(quarter,c, Gblur)
-    else:
-        pyrlvl1[:,:,i] = cv2.filter2D(pyrlvl1[:,:,i-1],c, Gblur)
-        pyrlvl2[:,:,i] = cv2.filter2D(pyrlvl2[:,:,i-1],c, Gblur)
-        pyrlvl3[:,:,i] = cv2.filter2D(pyrlvl3[:,:,i-1],c, Gblur)
-        pyrlvl4[:,:,i] = cv2.filter2D(pyrlvl4[:,:,i-1],c, Gblur)
+    pyrlvl1[:,:,i] = cv2.filter2D(doubled,c, gauss_blur(v, kvector[i]))
+    pyrlvl2[:,:,i] = cv2.filter2D(normal,c, gauss_blur(v, kvector[i+1]))
+    pyrlvl3[:,:,i] = cv2.filter2D(half,c, gauss_blur(v, kvector[i+2]))
+    pyrlvl4[:,:,i] = cv2.filter2D(quarter,c, gauss_blur(v, kvector[i+3]))
 
 #create zero layer for DoG images 
 DoGlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],5))
