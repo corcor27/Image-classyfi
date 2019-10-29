@@ -478,4 +478,14 @@ for i in range(0, keypoints.shape[0]):
         descriptors[i, :] = descriptors[i, :] / norm(descriptors[i, :]) 
         descriptors[i, :] = np.clip(descriptors[i, :], 0, 0.2)
         descriptors[i, :] = descriptors[i, :] / norm(descriptors[i, :])
-                
+        
+  def image_check_x(image):
+    if type(image.shape[0]/4) == int:
+        return image.shape[0]/4
+    else:
+        q = 0
+        while q < 4:
+            if type(((image.shape[0]+q)/4)) == int:
+                return (image.shape[0]+q)
+            else:
+                q+1                
