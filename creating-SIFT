@@ -6,6 +6,7 @@ import matplotlib.image as mpimg
 image = '/home/cot12/Documents/jup-pads/sky.jpeg'
 #image = '/home/cot12/Documents/jup-pads/waves.jpeg'
 Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
+
 def Image_check_x(image):
     p = image.shape[0]
     if ((p+3)/4) != int((p+3)/4):
@@ -38,6 +39,7 @@ def Image_check_y(image):
 q = Image_check_x(Beginning_image)
 u = Image_check_y(Beginning_image)
 beginning_image = cv2.resize(Beginning_image,(u,q))
+
 s = 3
 k = 2 ** (1.0 / s) #kernals
 sig = 1.6
@@ -98,8 +100,7 @@ Exlvl2 = np.zeros((normal.shape[0], normal.shape[1],3))
 Exlvl3 = np.zeros((half.shape[0], half.shape[1],3))
 Exlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],3))
 
-
-for i in range(1,4):
+or i in range(1,4):
     for j in range(1, doubled.shape[0] -1):
         for k in range(1, doubled.shape[1]-1):
             if np.absolute(DoGlvl1[j, k, i]) < threshold:
@@ -294,7 +295,9 @@ print("Number of extrema in second octave: %d" % np.sum(Exlvl2))
 print("Number of extrema in third octave: %d" % np.sum(Exlvl3))
 print("Number of extrema in fourth octave: %d" % np.sum(Exlvl4))
 extr_sum = int(np.sum(Exlvl1)) + int(np.sum(Exlvl2)) + int(np.sum(Exlvl3)) + int(np.sum(Exlvl4))
+
 keypoints = np.zeros((extr_sum, 4)) 
+
 
 
 # Gradient magnitude and orientation for each image sample point at each scale
@@ -309,26 +312,26 @@ Orientlvl3 = np.zeros((half.shape[0], half.shape[1], 3))
 Orientlvl4 = np.zeros((quarter.shape[0], quarter.shape[1], 3))
 
 for i in range(0,3):
-    for j in range(0, doubled.shape[0]-1):
-        for k in range(0, doubled.shape[1]-1):
+    for j in range(1, doubled.shape[0]-1):
+        for k in range(1, doubled.shape[1]-1):
             Grmaglvl1[j,k,i] = (((doubled[j+1,k] - doubled[j-1,k])**2) + ((doubled[j,k+1] - doubled[j,k-1])**2))**0.5
             Orientlvl1[j,k,i] =(((180/np.pi)*(np.pi + np.arctan2((doubled[j,k+1] - doubled[j,k-1]), (doubled[j+1,k] - doubled[j-1,k])))))
 
 for i in range(0,3):
-    for j in range(0, normal.shape[0]-1):
-        for k in range(0, normal.shape[1]-1):
+    for j in range(1, normal.shape[0]-1):
+        for k in range(1, normal.shape[1]-1):
             Grmaglvl2[j,k,i] = (((normal[j+1,k] - normal[j-1,k])**2) + ((normal[j,k+1] - normal[j,k-1])**2))**0.5
             Orientlvl2[j,k,i] =((180/np.pi)*(np.pi + np.arctan2((normal[j,k+1] - normal[j,k-1]), (normal[j+1,k] - normal[j-1,k]))))
             
 for i in range(0,3):
-    for j in range(0, half.shape[0]-1):
-        for k in range(0, half.shape[1]-1):
+    for j in range(1, half.shape[0]-1):
+        for k in range(1, half.shape[1]-1):
             Grmaglvl3[j,k,i] = (((half[j+1,k] - half[j-1,k])**2) + ((half[j,k+1] - half[j,k-1])**2))**0.5
             Orientlvl3[j,k,i] =((180/np.pi)*(np.pi + np.arctan2((half[j,k+1] - half[j,k-1]), (half[j+1,k] - half[j-1,k]))))
             
 for i in range(0,3):
-    for j in range(0, quarter.shape[0]-1):
-        for k in range(0, quarter.shape[1]-1):
+    for j in range(1, quarter.shape[0]-1):
+        for k in range(1, quarter.shape[1]-1):
             Grmaglvl4[j,k, i] = (((quarter[j+1,k] - quarter[j-1,k])**2) + ((quarter[j,k+1] - quarter[j,k-1])**2))**0.5
             Orientlvl4[j,k,i] =((180/np.pi)*(np.pi + np.arctan2((quarter[j,k+1] - quarter[j,k-1]), (quarter[j+1,k] - quarter[j-1,k]))))
 
@@ -337,7 +340,6 @@ for i in range(0,3):
 
 
 print("Calculating keypoint orientations...")
-
 
 def quantize_orientation(theta, num_bins): 
   bin_width = 360//num_bins 
@@ -366,15 +368,8 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([int(0.5*j) , int(0.5*k) , kvector[i], maxindex])
-                    count =+1
-                    orient_histogram[maxindex] = 0
-                    newmaxvalue = np.amax(orient_histogram)
-                    while newmaxvalue > 0.8 * maxval:
-                            newmaxindex = np.argmax(orient_histogram)
-                            np.append(keypoints, np.array([[int(j * 0.5), int(k * 0.5), kvector[i], newmaxidx]]), axis=0)
-                            orient_histogram[newmaxindex] = 0
-                            newmaxval = np.amax(orient_histogram)
+                    keypoints[count, :] = np.array([[int(0.5*j) , int(0.5*k) , kvector[i], maxindex]])
+                    count+= 1
 
 
 for i in range(0, 3):
@@ -397,16 +392,9 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([j , k , kvector[i+1], maxindex])
-                    count =+1
-                    orient_histogram[maxindex] = 0
-                    newmaxvalue = np.amax(orient_histogram)
-                    while newmaxvalue > 0.8 * maxval:
-                            newmaxindex = np.argmax(orient_histogram)
-                            np.append(keypoints, np.array([[j,k, kvector[i+1], newmaxidx]]), axis=0)
-                            orient_histogram[newmaxindex] = 0
-                            newmaxval = np.amax(orient_histogram)
-     
+                    keypoints[count, :] = np.array([[j , k , kvector[i+1], maxindex]])
+                    count+= 1
+                    
 for i in range(0, 3):
         for j in range(0, half.shape[0] - 1):
             for k in range(0, half.shape[1] - 1):
@@ -427,16 +415,9 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([(2*j) , (2*k) , kvector[i+2], maxindex])
-                    count =+1
-                    orient_histogram[maxindex] = 0
-                    newmaxvalue = np.amax(orient_histogram)
-                    while newmaxvalue > 0.8 * maxval:
-                            newmaxindex = np.argmax(orient_histogram)
-                            np.append(keypoints, np.array([[(j * 2),(k *2), kvector[i+2], newmaxidx]]), axis=0)
-                            orient_histogram[newmaxindex] = 0
-                            newmaxval = np.amax(orient_histogram)
-
+                    keypoints[count, :] = np.array([[(2*j) , (2*k) , kvector[i+2], maxindex]])
+                    count+= 1
+                    
 for i in range(0, 3):
         for j in range(0, quarter.shape[0] - 1):
             for k in range(0, quarter.shape[1] - 1):
@@ -457,19 +438,10 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([(4*j) , (4*k) , kvector[i+3], maxindex])
-                    count =+1
-                    orient_histogram[maxindex] = 0
-                    newmaxvalue = np.amax(orient_histogram)
-                    while newmaxvalue > 0.8 * maxval:
-                            newmaxindex = np.argmax(orient_histogram)
-                            np.append(keypoints, np.array([[(4*j) , (4*k) , kvector[i+3], maxindex]]), axis=0)
-                            orient_histogram[newmaxindex] = 0
-                            newmaxval = np.amax(orient_histogram)
-
+                    keypoints[count, :] = np.array([[(4*j) , (4*k) , kvector[i+3], maxindex]])
+                    count+= 1
                             
 print("Calculating descriptor...")
-
 magnitude = np.zeros((normal.shape[0], normal.shape[1], 12))
 orientation = np.zeros((normal.shape[0], normal.shape[1], 12))
 for i in range (0,3):
@@ -478,44 +450,28 @@ for i in range (0,3):
     magnitude[:, :, i] = (magmax/np.amax(magnitude[:, :, i]))* magnitude[:, :, i]
     orientation[:, :, i] = cv2.resize(Orientlvl1[:, :, i],None, fx = 0.5 , fy = 0.5).astype(int)
     orientation[:, :, i] = ((36//np.amax(orientation[:, :, i]))*orientation[:, :, i]).astype(int)
+for i in range(0,3):
     magnitude[:, :, i+3] = Grmaglvl2[:, :, i].astype(float)
     orientation[:, :, i+3] = Orientlvl2[:, :, i].astype(int)
+for i in range(0,3):
     magnitude[:, :, i+6] = cv2.resize(Grmaglvl3[:, :, i],None, fx = 2 , fy = 2).astype(int)
     orientation[:, :, i+6] = cv2.resize(Orientlvl3[:, :, i],None, fx = 2 , fy = 2).astype(int)
+for i in range(0,3):
     magnitude[:, :, i+9] = cv2.resize(Grmaglvl4[:, :, i],None, fx = 4 , fy = 4).astype(float)
     orientation[:, :, i+9] = cv2.resize(Orientlvl4[:, :, i],None, fx = 4 , fy = 4).astype(int)
-   
+
  descriptors = np.zeros([keypoints.shape[0], 128])
 
-for i in range(0, keypoints.shape[0]): 
-    w = int(3*np.ceil(sig)+1)
+for i in range(0, keypoints.shape[0]-1): 
+    w = 8
     for x in range(-w, w):
         for y in range(-w, w):
-            theta = 10 * keypoints[i,3] * np.pi / 180.0
+            theta = 10 * keypoints[i,3] * (np.pi / 180.0) # convert to raidians, plus return values to normal
             xrot = np.round((np.cos(theta) * x) - (np.sin(theta) * y))
             yrot = np.round((np.sin(theta) * x) + (np.cos(theta) * y))
-            scale_idx = np.argwhere(kvector == keypoints[i,2])[0][0]
+            scale_idx = np.argwhere(kvector == keypoints[i,2])
             x0 = keypoints[i,0]
             y0 = keypoints[i,1]
-            gaussian_window = gauss_blur(sig)
-            weight = magnitude[int(x0 + xrot), int(y0 + yrot), scale_idx] * gaussian_window[x0 + xrot, y0 + yrot]
-            angle = orientation[int(x0 + xrot), int(y0 + yrot), scale_idx] - keypoints[i,3]
-            if angle < 0:
-                angle = 36 + angle
-            bin = np.clip(np.floor((8.0 / 36) * angle), 0, 7).astype(int)
-            descriptors[i, 32 * int((x + 8)/4) + 8 * int((y + 8)/4) + bin_idx] += weight
-        
-        descriptors[i, :] = descriptors[i, :] / norm(descriptors[i, :]) 
-        descriptors[i, :] = np.clip(descriptors[i, :], 0, 0.2)
-        descriptors[i, :] = descriptors[i, :] / norm(descriptors[i, :])
-        
-  def image_check_x(image):
-    if type(image.shape[0]/4) == int:
-        return image.shape[0]/4
-    else:
-        q = 0
-        while q < 4:
-            if type(((image.shape[0]+q)/4)) == int:
-                return (image.shape[0]+q)
-            else:
-                q+1                
+            gaussian_window = gauss_blur(w/6)
+            x_position = int(x0 + xrot)
+            y_position = int(x0 + xrot)
