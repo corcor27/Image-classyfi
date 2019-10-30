@@ -461,18 +461,27 @@ for i in range(0,3):
     magnitude[:, :, i+9] = cv2.resize(Grmaglvl4[:, :, i],None, fx = 4 , fy = 4).astype(float)
     orientation[:, :, i+9] = cv2.resize(Orientlvl4[:, :, i],None, fx = 4 , fy = 4).astype(int)
 
- descriptors = np.zeros([keypoints.shape[0], 128])
-
+descriptors = np.zeros([keypoints.shape[0], 128])
+def another_orientation(theta2, num_bins1): 
+  bin_width = 360//num_bins1 
+  return int(np.floor(theta2)//bin_width)
 for i in range(0, keypoints.shape[0]-1): 
-    w = 8
-    for x in range(-w, w):
-        for y in range(-w, w):
-            theta = 10 * keypoints[i,3] * (np.pi / 180.0) # convert to raidians, plus return values to normal
-            xrot = np.round((np.cos(theta) * x) - (np.sin(theta) * y))
-            yrot = np.round((np.sin(theta) * x) + (np.cos(theta) * y))
-            scale_idx = np.argwhere(kvector == keypoints[i,2])
+    w = 16
+    num_bins1 = 8
+    num_subregion = 4
+    for x in range(-num_subregion, num_subregion):
+        for y in range(-num_subregion, num_subregion):
+            theta2 = 10 * keypoints[i,3] * (np.pi / 180.0) # convert to raidians, plus return values to normal
+            xrot = int(np.round((np.cos(theta) * x) - (np.sin(theta) * y)))
+            yrot = int(np.round((np.sin(theta) * x) + (np.cos(theta) * y)))
+            scale_idx = keypoints[i,2]
             x0 = keypoints[i,0]
             y0 = keypoints[i,1]
             gaussian_window = gauss_blur(w/6)
             x_position = int(x0 + xrot)
-            y_position = int(x0 + xrot)
+            y_position = int(y0 + yrot)
+            weight = magnitude[x_position, y_position] * gaussian_window[xrot,yrot]
+            angle = orientation[x_position, y_position] - keypoints[i,3]
+            if [angle < 0]:
+                angle = 360 + angle
+            bin = quantize_orientation(theta, num_bins1)
