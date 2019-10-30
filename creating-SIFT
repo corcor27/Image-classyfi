@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-image = '/home/cot12/Documents/jup-pads/sky.jpeg'
+#image = '/home/cot12/Documents/jup-pads/sky.jpeg'
 #image = '/home/cot12/Documents/jup-pads/waves.jpeg'
+image = r"C:\Users\cory\Documents\flower.jpeg"
 Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
 
 def Image_check_x(image):
