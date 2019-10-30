@@ -6,8 +6,38 @@ import matplotlib.image as mpimg
 image = '/home/cot12/Documents/jup-pads/sky.jpeg'
 #image = '/home/cot12/Documents/jup-pads/waves.jpeg'
 Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
-beginning_image = cv2.resize(Beginning_image,(280,500))
+def Image_check_x(image):
+    p = image.shape[0]
+    if ((p+3)/4) != int((p+3)/4):
+        if ((p+2)/4) != int((p+2)/4):
+            if ((p+1)/4) != int((p+1)/4):
+                return p
+            else:
+                return p+1
+        else:
+            return p+2
+    else:
+        return p+3
 
+
+
+def Image_check_y(image):
+    p = image.shape[1]
+    if ((p+3)/4) != int((p+3)/4):
+        if ((p+2)/4) != int((p+2)/4):
+            if ((p+1)/4) != int((p+1)/4):
+                return p
+            else:
+                return p+1
+        else:
+            return p+2
+    else:
+        return p+3
+    
+    
+q = Image_check_x(Beginning_image)
+u = Image_check_y(Beginning_image)
+beginning_image = cv2.resize(Beginning_image,(u,q))
 s = 3
 k = 2 ** (1.0 / s) #kernals
 sig = 1.6
