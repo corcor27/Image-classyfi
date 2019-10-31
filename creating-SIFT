@@ -2,10 +2,13 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from scipy import ndimage
 
-#image = '/home/cot12/Documents/jup-pads/sky.jpeg'
+#image = '/home/cot12/Documents/jup-pads/circle.jpg'
+image = '/home/cot12/Documents/jup-pads/boob.jpg'
+#image = '/home/cot12/Documents/jup-pads/rectangle.jpg'
 #image = '/home/cot12/Documents/jup-pads/waves.jpeg'
-image = r"C:\Users\cory\Documents\flower.jpeg"
+#image = r"C:\Users\cory\Documents\flower.jpeg"
 Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
 
 def Image_check_x(image):
@@ -37,10 +40,9 @@ def Image_check_y(image):
         return p+3
     
     
-q = Image_check_x(Beginning_image)
-u = Image_check_y(Beginning_image)
+q = int(Image_check_x(Beginning_image))
+u = int(Image_check_y(Beginning_image))
 beginning_image = cv2.resize(Beginning_image,(u,q))
-
 s = 3
 k = 2 ** (1.0 / s) #kernals
 sig = 1.6
@@ -64,10 +66,10 @@ def gauss_blur(sigma):
 # detA = (dxx*((dyy * dzz)-(dyz**2))) + (dxy*((dxy*dzz)-(dxz*dyz))) + (dxz*((dxy*dxz)-((dyy*dxz))))
 
 #create image size variant
-doubled = cv2.resize((beginning_image), None, fx = 2 , fy = 2)
-normal = cv2.resize((doubled), None, fx = 0.5 , fy = 0.5)
-half = cv2.resize((normal), None, fx = 0.5 , fy = 0.5)
-quarter = cv2.resize((half), None, fx = 0.5 , fy = 0.5)
+doubled = cv2.resize((beginning_image), ((2*u),(2*q)))
+normal = cv2.resize((doubled),(u,q))
+half = cv2.resize((normal), (int(u/2),int(q/2)))
+quarter = cv2.resize((half),(int(u/4),int(q/4)))
 
 #create zero layer for pyramid
 pyrlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],6))
@@ -77,10 +79,10 @@ pyrlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],6))
 
 # create our Gaussian pyramid
 for i in range(0,6):
-    pyrlvl1[:,:,i] = cv2.filter2D(doubled,c, gauss_blur(kvector[i]))
-    pyrlvl2[:,:,i] = cv2.filter2D(normal,c, gauss_blur(kvector[i+1]))
-    pyrlvl3[:,:,i] = cv2.filter2D(half,c, gauss_blur(kvector[i+2]))
-    pyrlvl4[:,:,i] = cv2.filter2D(quarter,c, gauss_blur(kvector[i+3]))
+    pyrlvl1[:,:,i] = ndimage.filters.gaussian_filter(doubled, kvector[i]) 
+    pyrlvl2[:,:,i] = ndimage.filters.gaussian_filter(normal, kvector[i+1])
+    pyrlvl3[:,:,i] = ndimage.filters.gaussian_filter(half, kvector[i+2])
+    pyrlvl4[:,:,i] = ndimage.filters.gaussian_filter(quarter,kvector[i+3])
 
 #create zero layer for DoG images 
 DoGlvl1 = np.zeros((doubled.shape[0], doubled.shape[1],5))
@@ -102,15 +104,15 @@ Exlvl3 = np.zeros((half.shape[0], half.shape[1],3))
 Exlvl4 = np.zeros((quarter.shape[0], quarter.shape[1],3))
 
 for i in range(1,4):
-    for j in range(1, doubled.shape[0] -1):
-        for k in range(1, doubled.shape[1]-1):
+    for j in range(16, doubled.shape[0] -16):
+        for k in range(16, doubled.shape[1]-16):
             if np.absolute(DoGlvl1[j, k, i]) < threshold:
                 continue
             maxima = DoGlvl1[j,k,i] > 0
             minima = DoGlvl1[j,k,i] < 0
-            for di in range(-1,1):
-                for dj in range(-1,1):
-                    for dk in range(-1,1):
+            for di in range(-1,2):
+                for dj in range(-1,2):
+                    for dk in range(-1,2):
                         if di == 0 and dj ==0 and dk == 0:
                             continue
                         maxima = maxima and (DoGlvl1[j, k, i] > DoGlvl1[j + dj, k + dk, i + di])
@@ -146,18 +148,17 @@ for i in range(1,4):
                 r = 10.0
                 if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(D_X_hat) < 0.03]:
                     Exlvl1[j, k, i - 1] = 1
-               
 
 for i in range(1,4):
-    for j in range(1, normal.shape[0] -1):
-        for k in range(1, normal.shape[1]-1):
+    for j in range(8, normal.shape[0] -8):
+        for k in range(8, normal.shape[1]-8):
             if np.absolute(DoGlvl2[j, k, i]) < threshold:
                 continue
             maxima = DoGlvl2[j,k,i] > 0
             minima = DoGlvl2[j,k,i] < 0
-            for di in range(-1,1):
-                for dj in range(-1,1):
-                    for dk in range(-1,1):
+            for di in range(-1,2):
+                for dj in range(-1,2):
+                    for dk in range(-1,2):
                         if di == 0 and dj ==0 and dk == 0:
                             continue
                         maxima = maxima and (DoGlvl2[j, k, i] > DoGlvl2[j + dj, k + dk, i + di])
@@ -192,17 +193,17 @@ for i in range(1,4):
                 r = 10.0
                 if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(D_X_hat) < 0.03]:
                     Exlvl2[j, k, i - 1] = 1
-
+                    
 for i in range(1,4):
-    for j in range(1, half.shape[0] -1):
-        for k in range(1, half.shape[1]-1):
+    for j in range(4, half.shape[0] -4):
+        for k in range(4, half.shape[1]-4):
             if np.absolute(DoGlvl3[j, k, i]) < threshold:
                 continue
             maxima = DoGlvl3[j,k,i] > 0
             minima = DoGlvl3[j,k,i] < 0
-            for di in range(-1,1):
-                for dj in range(-1,1):
-                    for dk in range(-1,1):
+            for di in range(-1,2):
+                for dj in range(-1,2):
+                    for dk in range(-1,2):
                         if di == 0 and dj ==0 and dk == 0:
                             continue
                         maxima = maxima and (DoGlvl3[j, k, i] > DoGlvl3[j + dj, k + dk, i + di])
@@ -238,20 +239,17 @@ for i in range(1,4):
                 r = 10.0
                 if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(D_X_hat) < 0.03]:
                     Exlvl3[j, k, i - 1] = 1
-                                 
-                                 
-                
-                
+        
 for i in range(1,4):
-    for j in range(1, quarter.shape[0] -1):
-        for k in range(1, quarter.shape[1]-1):
+    for j in range(2, quarter.shape[0] -2):
+        for k in range(2, quarter.shape[1]-2):
             if np.absolute(DoGlvl4[j, k, i]) < threshold:
                 continue
             maxima = DoGlvl4[j,k,i] > 0
             minima = DoGlvl4[j,k,i] < 0
-            for di in range(-1,1):
-                for dj in range(-1,1):
-                    for dk in range(-1,1):
+            for di in range(-1,2):
+                for dj in range(-1,2):
+                    for dk in range(-1,2):
                         if di == 0 and dj ==0 and dk == 0:
                             continue
                         maxima = maxima and (DoGlvl4[j, k, i] > DoGlvl4[j + dj, k + dk, i + di])
@@ -287,19 +285,15 @@ for i in range(1,4):
                 r = 10.0
                 if [(((dxx + dyy) ** 2) * r) < (dxx * dyy - (dxy ** 2)) * (((r + 1) ** 2)) and np.absolute(D_X_hat) < 0.03]:
                     Exlvl4[j, k, i - 1] = 1
-                 
-
-
-                                                 
+                    
 print("Number of extrema in first octave: %d" % np.sum(Exlvl1))
 print("Number of extrema in second octave: %d" % np.sum(Exlvl2))
 print("Number of extrema in third octave: %d" % np.sum(Exlvl3))
 print("Number of extrema in fourth octave: %d" % np.sum(Exlvl4))
+
 extr_sum = int(np.sum(Exlvl1)) + int(np.sum(Exlvl2)) + int(np.sum(Exlvl3)) + int(np.sum(Exlvl4))
 
 keypoints = np.zeros((extr_sum, 4)) 
-
-
 
 # Gradient magnitude and orientation for each image sample point at each scale
 Grmaglvl1 = np.zeros((doubled.shape[0], doubled.shape[1], 3))
@@ -334,12 +328,8 @@ for i in range(0,3):
     for j in range(1, quarter.shape[0]-1):
         for k in range(1, quarter.shape[1]-1):
             Grmaglvl4[j,k, i] = (((quarter[j+1,k] - quarter[j-1,k])**2) + ((quarter[j,k+1] - quarter[j,k-1])**2))**0.5
-            Orientlvl4[j,k,i] =((180/np.pi)*(np.pi + np.arctan2((quarter[j,k+1] - quarter[j,k-1]), (quarter[j+1,k] - quarter[j-1,k]))))
-
-            
-
-
-
+            Orientlvl4[j,k,i] =((180/np.pi)*(np.pi + np.arctan2((quarter[j,k+1] - quarter[j,k-1]), (quarter[j+1,k]- quarter[j-1,k]))))
+    
 print("Calculating keypoint orientations...")
 
 def quantize_orientation(theta, num_bins): 
@@ -369,10 +359,9 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([[int(0.5*j) , int(0.5*k) , kvector[i], maxindex]])
+                    keypoints[count, :] = np.array([[int(k/2) , int(j/2) , kvector[i], maxindex]])
                     count+= 1
-
-
+                    
 for i in range(0, 3):
         for j in range(0, normal.shape[0] - 1):
             for k in range(0, normal.shape[1] - 1):
@@ -393,7 +382,7 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([[j , k , kvector[i+1], maxindex]])
+                    keypoints[count, :] = np.array([[int(k) , int(j) , kvector[i+1], maxindex]])
                     count+= 1
                     
 for i in range(0, 3):
@@ -416,7 +405,7 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([[(2*j) , (2*k) , kvector[i+2], maxindex]])
+                    keypoints[count, :] = np.array([[int(2*k) , int(2*j) , kvector[i+2], maxindex]])
                     count+= 1
                     
 for i in range(0, 3):
@@ -439,8 +428,9 @@ for i in range(0, 3):
                             orient_histogram[bin] += weight
                     maxvalue = np.amax(orient_histogram)
                     maxindex = np.argmax(orient_histogram)
-                    keypoints[count, :] = np.array([[(4*j) , (4*k) , kvector[i+3], maxindex]])
+                    keypoints[count, :] = np.array([[int(4*k) , int(4*j) , kvector[i+3], maxindex]])
                     count+= 1
+                    
                             
 print("Calculating descriptor...")
 magnitude = np.zeros((normal.shape[0], normal.shape[1], 12))
@@ -460,11 +450,9 @@ for i in range(0,3):
 for i in range(0,3):
     magnitude[:, :, i+9] = cv2.resize(Grmaglvl4[:, :, i],None, fx = 4 , fy = 4).astype(float)
     orientation[:, :, i+9] = cv2.resize(Orientlvl4[:, :, i],None, fx = 4 , fy = 4).astype(int)
+#show features
 
 descriptors = np.zeros([keypoints.shape[0], 128])
-def another_orientation(theta2, num_bins1): 
-  bin_width = 360//num_bins1 
-  return int(np.floor(theta2)//bin_width)
 for i in range(0, keypoints.shape[0]-1): 
     w = 16
     num_bins1 = 8
@@ -474,9 +462,8 @@ for i in range(0, keypoints.shape[0]-1):
             theta2 = 10 * keypoints[i,3] * (np.pi / 180.0) # convert to raidians, plus return values to normal
             xrot = int(np.round((np.cos(theta) * x) - (np.sin(theta) * y)))
             yrot = int(np.round((np.sin(theta) * x) + (np.cos(theta) * y)))
-            scale_idx = keypoints[i,2]
-            x0 = keypoints[i,0]
-            y0 = keypoints[i,1]
+            x0 = keypoints[i,1]
+            y0 = keypoints[i,0]
             gaussian_window = gauss_blur(w/6)
             x_position = int(x0 + xrot)
             y_position = int(y0 + yrot)
@@ -484,4 +471,20 @@ for i in range(0, keypoints.shape[0]-1):
             angle = orientation[x_position, y_position] - keypoints[i,3]
             if [angle < 0]:
                 angle = 360 + angle
-            bin = quantize_orientation(theta, num_bins1)
+            bin_idx = np.clip(np.floor((8.0 / 360) * angle), 0, 7).astype(int)
+            descriptors[i, 32 * int((x + 8)/4) + 8 * int((y + 8)/4) + bin_idx] += weight
+        descriptors[i, :] = descriptors[i, :] / np.linalg.norm(descriptors[i, :]) 
+        descriptors[i, :] = np.clip(descriptors[i, :], 0, 0.2)
+        descriptors[i, :] = descriptors[i, :] / np.linalg.norm(descriptors[i, :])   
+    
+image2 = beginning_image
+radius = 3
+thickness = 1
+color = (255, 255, 255)
+for i in range(0, int(keypoints.shape[0])):
+    center_coordinates = (int(keypoints[i,0]),int(keypoints[i,1]))
+    cv2.circle(beginning_image, center_coordinates, radius, color, thickness)
+cv2.imwrite('/home/cot12/Documents/jup-pads/rectangle-sift2.jpg',image2)
+
+cv2.imwrite('/home/cot12/Documents/jup-pads/rectangle2.jpg',doubled)
+
