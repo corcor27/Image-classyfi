@@ -1,5 +1,5 @@
 #!/bin/bash
 echo Your environment is ready good sir \
 
-anaconda3-launch -env coryenv bash
+sbatch --gres gpu:1 anaconda3-launch -env coryenv python
 
