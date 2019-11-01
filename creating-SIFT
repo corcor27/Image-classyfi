@@ -474,7 +474,7 @@ def sift_features(image)
             descriptors[i, :] = np.clip(descriptors[i, :], 0, 0.2)
             descriptors[i, :] = descriptors[i, :] / np.linalg.norm(descriptors[i, :])
     
-    np.savetxt('/home/cot12/Documents/jup-pads/2darray.csv', descriptors, delimiter=',', fmt='%d')
+    np.savetxt('/impacs/cot12/bin', descriptors, delimiter=',', fmt='%d')
     
     def image-print(image2)
             radius = 3
@@ -483,5 +483,5 @@ def sift_features(image)
             for i in range(0, int(keypoints.shape[0])):
                 center_coordinates = (int(keypoints[i,0]),int(keypoints[i,1]))
                 cv2.circle(image2, center_coordinates, radius, color, thickness)
-            cv2.imwrite('/home/cot12/Documents/jup-pads/boob-shift2.jpg',image2)
+            cv2.imwrite('/impacs/cot12/bin',image2)
 
