@@ -2,7 +2,6 @@ name: corysift
 dependencies:
     - python=3
     - numpy
-    - tensorflow-gpu cudatoolkit=9.2
     - opencv
     - caffe cudatoolkit=9.2
     - pytorch  cudatoolkit=9.2
