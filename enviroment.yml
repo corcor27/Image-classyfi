@@ -3,9 +3,6 @@ dependencies:
     - python=3
     - numpy
     - opencv
-    - caffe cudatoolkit=9.2
-    - pytorch  cudatoolkit=9.2
-    - torchvision  cudatoolkit=9.2
     - py-opencv 
     - pillow
     - scipy
