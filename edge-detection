@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from scipy import ndimage
 
-image = r"C:\Users\cory\Documents\M\client-100-84.1.jpg"
-#image ='/home/cot12/Documents/jup-pads/boob.jpg'
+#image = r"C:\Users\cory\Documents\M\client-100-84.1.jpg"
+image ='/home/cot12/Documents/jup-pads/boob.jpg'
 Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
 
 def Image_check_x(image):
@@ -52,7 +52,7 @@ doubled = cv2.resize((beginning_image), ((2*u),(2*q)))
 normal = cv2.resize((doubled),(u,q))
     
 pyrlvl = np.zeros((normal.shape[0], normal.shape[1]))
-pyrlvl[:,:] = ndimage.filters.gaussian_filter(normal,kvector[0])
+pyrlvl[:,:] = ndimage.filters.gaussian_filter(normal,kvector[2])
 Exlvl1 = np.zeros((normal.shape[0], normal.shape[1]))
 Grmaglvl = np.zeros((normal.shape[0], normal.shape[1]))
 Orientlvl = np.zeros((normal.shape[0], normal.shape[1]))
@@ -66,71 +66,45 @@ for j in range(1, normal.shape[0]-1):
 
 Orientlvl_absolute[:,:] = np.absolute(Orientlvl[:,:])
 
+for j in range(1, normal.shape[0]-1):
+    for k in range(1, normal.shape[1]-1):
+        if 67.5 < Orientlvl_absolute[j,k] < 112.5:
+            if pyrlvl[j,k] < pyrlvl[j,k+1] and pyrlvl[j,k] < pyrlvl[j,k-1]:
+                Exlvl1[j,k] = 1
                 
 for j in range(1, normal.shape[0]-1):
     for k in range(1, normal.shape[1]-1):
         if 0 < Orientlvl_absolute[j,k] < 22.5:
             if pyrlvl[j,k] > pyrlvl[j+1,k] and pyrlvl[j,k] > pyrlvl[j-1,k]:
-                Exlvl1[j,k] == 1
-            else:
-                continue
-        else:
-            continue
-
-
+                Exlvl1[j,k] = 1
+                
 for j in range(1, normal.shape[0]-1):
     for k in range(1, normal.shape[1]-1):
-        if  157.5 < Orientlvl_absolute[j,k] < 181:
+        if 157.5 < Orientlvl_absolute[j,k] < 181:
             if pyrlvl[j,k] > pyrlvl[j+1,k] and pyrlvl[j,k] > pyrlvl[j-1,k]:
-                Exlvl1[j,k] == 1
-            else:
-                continue
-        else:
-            continue
-            
-for j in range(1, normal.shape[0]-1):
-    for k in range(1, normal.shape[1]-1):
-        if 67.5< Orientlvl_absolute[j,k] <112.5:
-            if pyrlvl[j,k] > pyrlvl[j,k+1] and pyrlvl[j,k] > pyrlvl[j,k-1]:
-                Exlvl1[j,k] == 1
-            else:
-                continue
-        else:
-            continue
-            
+                Exlvl1[j,k] = 1
+        
 for j in range(1, normal.shape[0]-1):
     for k in range(1, normal.shape[1]-1):
         if 22.5 < Orientlvl_absolute[j,k] < 67.5:
             if Orientlvl[j,k] > 0:
                 if pyrlvl[j,k] > pyrlvl[j+1,k+1] and pyrlvl[j,k] > pyrlvl[j-1,k-1]:
-                    Exlvl1[j,k] == 1
+                    Exlvl1[j,k] = 1
                 else:
                     continue
             else:
                 if pyrlvl[j,k] > pyrlvl[j-1,k+1] and pyrlvl[j,k] > pyrlvl[j+1,k-1]:
-                    Exlvl1[j,k] == 1
-        else:
-            continue
-            
-            
+                    Exlvl1[j,k] = 1
+
 for j in range(1, normal.shape[0]-1):
     for k in range(1, normal.shape[1]-1):
-        if 112.5 > Orientlvl_absolute[j,k] < 157.5:
+        if 112.5 < Orientlvl_absolute[j,k] < 157.5:
             if Orientlvl[j,k] > 0:
                 if pyrlvl[j,k] > pyrlvl[j-1,k+1] and pyrlvl[j,k] > pyrlvl[j+1,k-1]:
-                    Exlvl1[j,k] == 1
+                    Exlvl1[j,k] = 1
                 else:
                     continue
             else:
                 if pyrlvl[j,k] > pyrlvl[j+1,k+1] and pyrlvl[j,k] > pyrlvl[j-1,k-1]:
-                    Exlvl1[j,k] == 1
-        else:
-            continue
-
+                    Exlvl1[j,k] = 1
 exlvl = 255*Exlvl1[:,:]
-
-cv2.imwrite(r"C:\Users\cory\Documents\mamograms\client-100-84.1-test-image.jpg",exlvl)
-            
-
-            
-            
