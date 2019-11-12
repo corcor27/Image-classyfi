@@ -59,15 +59,20 @@ Exlvl1 = np.zeros((normal.shape[0], normal.shape[1]))
 Grmaglvl = np.zeros((normal.shape[0], normal.shape[1]))
 Orientlvl = np.zeros((normal.shape[0], normal.shape[1]))
 Orientlvl_absolute = np.zeros((normal.shape[0], normal.shape[1]))
+value_count = np.zeros((normal.shape[0], normal.shape[1]))
 Grmaglvl = (((pyrlvlx)**2)+((pyrlvly)**2))**0.5
 cv2.imwrite('/home/cot12/Documents/test-folder/tests/client-1002-884.1-gradientmag-2.jpg', Grmaglvl)
 for j in range(1, normal.shape[0]-1):
         for k in range(1, normal.shape[1]-1):
             Orientlvl[j,k] = np.rint(((180/np.pi)*np.arctan2((pyrlvl[j,k+1]-pyrlvl[j,k-1]),(pyrlvl[j+1,k]-pyrlvl[j-1,k]))))
-mean = np.mean(Grmaglvl)
+            if Grmaglvl[j,k]> 0:
+                value_count[j,k] = 1
+number_values = np.sum(value_count)
+gradient_values = np.sum(Grmaglvl)
+mean = gradient_values/number_values
 lowest_value = np.min(Grmaglvl[np.nonzero(Grmaglvl)])
 upper_percentile = mean + lowest_value
-lower_percentile = mean - lowest_value
+lower_percentile_gap = mean - lowest_value
 Orientlvl_absolute[:,:] = np.absolute(Orientlvl[:,:])
 
 for j in range(1, normal.shape[0]-1):
