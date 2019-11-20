@@ -14,11 +14,11 @@
 #SBATCH --ntasks=1
 # specify our current project
 # change this for your own work
-#SBATCH --account=scwXXXX
+#SBATCH --account=scw1389
 # specify the reservation we have for the training workshop
 # replace XX with the code provided by your instructor
 # remove this for your own work
-#SBATCH --reservation=scwXXXX_YY
+#SBATCH --reservation=scw1389_23
 ###
 
 /bin/hostname
