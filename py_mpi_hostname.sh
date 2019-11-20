@@ -7,11 +7,11 @@
 #SBATCH --error=py_mpi_hostname.err.%J.%N
 # specify our current project
 # replace XXXX with the code provided by your instructor
-#SBATCH --account=scwXXXX
+#SBATCH --account=scw1389
 # specify the reservation we have for the training workshop
 # remove this for your own work
 # replace XXXX and YY with the code provided by your instructor
-#SBATCH --reservation=scwXXXX_YY
+#SBATCH --reservation=scw1389_23
 
 ###
 
