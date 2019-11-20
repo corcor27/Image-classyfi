@@ -18,6 +18,7 @@
 # specify the reservation we have for the training workshop
 # replace XX with the code provided by your instructor
 # remove this for your own work
+
 #SBATCH --reservation=scw1389_23
 #SBATCH --mail-user=cot12@aber.ac.uk
 #SBATCH --mail-type=ALL
