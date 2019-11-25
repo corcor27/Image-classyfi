@@ -1,0 +1,102 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from scipy import ndimage
+
+image = '/home/cot12/Documents/test-folder/B/image_10-14-2019_12.jpg'
+Beginning_image = cv2.imread(image,0) #read image "0" for gray and "1" for colour
+def Image_check_x(image):
+    p = image.shape[0]
+    if ((p+3)/4) != int((p+3)/4):
+        if ((p+2)/4) != int((p+2)/4):
+            if ((p+1)/4) != int((p+1)/4):
+                return p
+            else:
+                return p+1
+        else:
+            return p+2
+    else:
+        return p+3
+
+
+
+def Image_check_y(image):
+    p = image.shape[1]
+    if ((p+3)/4) != int((p+3)/4):
+        if ((p+2)/4) != int((p+2)/4):
+            if ((p+1)/4) != int((p+1)/4):
+                return p
+            else:
+                return p+1
+        else:
+            return p+2
+    else:
+        return p+3
+    
+    
+q = int(Image_check_x(Beginning_image))
+u = int(Image_check_y(Beginning_image))
+beginning_image = cv2.resize(Beginning_image,(u,q))
+s = 3
+k = 2 ** (1.0 / s) #kernals
+sig = 1.6
+kvector = np.array([sig, k*sig, sig*(k**2), sig*(k**3), sig*(k**4), sig*(k**5),sig*(k**6), sig*(k**7), sig*(k**8)])
+c = -1
+threshold = 1
+doubled = cv2.resize((beginning_image), ((2*u),(2*q)))
+normal = cv2.resize((doubled),(u,q))
+pylvlx = np.zeros((q, u))
+pylvly = np.zeros((q, u))
+pylvlines = np.zeros((q, u))
+
+for k in range(15,q-15):
+    for j in range(15,u-15):
+        if normal[k,j]>0:
+            pylvlx[k,j] = 255
+            break
+        else:
+            continue
+            
+for k in range(-q+15,-14):
+    for j in range(-u+15,-14):
+        z = int(np.sqrt(k**2))
+        l = int(np.sqrt(j**2))
+        if normal[z,l]>0:
+            pylvlx[z,l] = 255
+            break
+        else:
+            continue
+        
+
+for j in range(15,u-15):
+    for k in range(15,q-15):
+        if normal[k,j]>0:
+            pylvly[k,j] = 255
+            break
+        else:
+            continue
+
+for j in range(-u+15,-14):
+    for k in range(-q+15,-14):
+        z = int(np.sqrt(k**2))
+        l = int(np.sqrt(j**2))
+        if normal[z,l]>0:
+            pylvly[z,l] = 255
+            break
+        else:
+            continue
+
+pylvltotal = pylvlx + pylvly
+
+for k in range(0,q):
+    for j in range(0,u):
+        if pylvltotal[k,j] > 0:
+            for dk in range(-14,15):
+                for dj in range(-14,15):
+                    pylvlines[k+dk,j+dj] = 255
+                    continue
+
+
+
+cv2.imwrite('/home/cot12/Documents/test-folder/tests/edge-detection-2.0-attempt10.jpg', pylvltotal)
