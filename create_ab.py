@@ -216,23 +216,5 @@ for k in range(0,LMLO[1]):
         for i in range(0, 500):
             if CC[0][j,i] > 0 and LMLO[0][k,i] > 0:
                 
-x = []
-y = []
-z = []
-for k in range(0, LMLO[1]):
-    for j in range(0, CC[1]):
-        for i in range(0, 500):
-            if dimesional_array[i,j,k] == 1:
-                x.append(i)
-                y.append(j)
-                z.append(k)
-        
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-ax.scatter(x,y,z)
-ax.set_xlim3d(diffxml,0)
-ax.set_ylim3d(0,diffycc)
-ax.set_zlim3d(0, diffzml)
-ax.view_init(90,80)
-fig.savefig(r"C:\Users\cory1\OneDrive\Documents\test-folder\abnormaility-cuts\plot1jpg")
+
                 
