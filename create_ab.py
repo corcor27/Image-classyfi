@@ -234,5 +234,5 @@ ax.set_xlim3d(diffxml,0)
 ax.set_ylim3d(0,diffycc)
 ax.set_zlim3d(0, diffzml)
 ax.view_init(90,80)
-plt.savefig(r"C:\Users\cory1\OneDrive\Documents\test-folder\abnormaility-cuts\image_12-16-2019_1.jpg", fig)
+plt.savefig(r"C:\Users\cory1\OneDrive\Documents\test-folder\abnormaility-cuts\plot1jpg", fig)
                 
