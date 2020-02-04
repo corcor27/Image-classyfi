@@ -19,7 +19,7 @@ def positions(i,k,array,clusterA):
             val_new = position_check_A(x,z,clusterA)
             val_old = position_check_ini(x,z,array)
             val_bright = brightness(i,k,x,z,array)
-            if val_old == 1 and val_new == 0 and val_bright == 1:
+            if val_old == 1 and val_new == 0:
                 new_x.append(x)
                 new_z.append(z)
     return new_x, new_z
@@ -65,7 +65,7 @@ def cluster_1(array,diffzml,diffxml, clusterA, pp):
     initial_z = initial_pos[1]
     x_list.append(initial_x)
     z_list.append(initial_z)
-    clusterA[initial_x,initial_z] = array[initial_x,initial_z]
+    clusterA[initial_x,initial_z] = pp
     
     while len(x_list) > 0:
         i1 = x_list[0]
@@ -97,7 +97,8 @@ def avaiable_position(array, clusterA,diffzml, diffxml):
     
 def clustering(array,diffzml,diffxml):
     clusterA = np.zeros((diffzml,diffxml))
-    for pp in range(100,500):
+    
+    for pp in range(1,500):
         w = avaiable_position(array, clusterA,diffzml, diffxml)
         if w == 1:
             cluster_1(array,diffzml,diffxml,clusterA, pp)
@@ -105,12 +106,7 @@ def clustering(array,diffzml,diffxml):
             break
     return clusterA
 
-def branching(array,diffzml,diffxml):
-    clusterA = np.zeros((diffzml, diffxml))
-    clusterB = np.zeros((diffzml,diffxml))
-    for pp in range(1,2):
-        cluster_1(array,diffzml,diffxml,clusterA,pp)
-    return clusterA
+
 
 image1 = r"C:\Users\cory1\OneDrive\Documents\test-folder\abnormaility-cuts\image_12-16-2019_1.jpg"
 image2 = r"C:\Users\cory1\OneDrive\Documents\test-folder\abnormaility-cuts\image_12-16-2019_0.jpg"
@@ -138,11 +134,45 @@ def image_position(image,x1,x2,z1,z2,UB,LB):
                 density[i,j] = lum
             else:
                 density[i,j] = 0
-    Blur_array = np.zeros((diffzml, diffxml))
-    transfer = np.zeros((diffzml, diffxml))
-    Blur_array[:,:] = ndimage.filters.gaussian_filter(density, 3)
-    for ii in range(u, diffzml-u):
-        for kk in range(u, diffxml-u):
-            transfer[ii,kk] = Blur_array[ii,kk]
-    a = clustering(density, diffzml,diffxml)
-    return a
+    
+    return diffzml, diffxml, density
+
+def area(array,diffzml,diffxml, rr):
+    count = 0
+    for ii in range(0,diffzml):
+        for kk in range(0,diffxml):
+            if array[ii,kk] == rr:
+                count+=1
+    return count
+
+def image_segmentation(clustered_array, array):
+    d = int(np.max(clustered_array))
+    pos = np.zeros((1,d))
+    for rr in range(1,d):
+        count = 0
+        for ii in range(0,diffzml):
+            for kk in range(0,diffxml):
+                if clustered_array[ii,kk] == d:
+                    count =+ 1
+        pos[:,count] = count
+    return d
+transfer = image_position(image1,1232,1561,1897,2209,UB,LB)
+diffzml = transfer[0]
+diffxml = transfer[1]
+cluster = clustering(transfer[2], diffzml,diffxml)
+
+def cluster_reduction(cluster_array,array, ll, diffzml, diffxml):
+    clusterA = np.zeros((diffzml,diffxml))
+    for ii in range(0,diffzml):
+        for kk in range(0,diffxml):
+            if cluster_array[ii,kk] == ll:
+                clusterA[ii,kk] = array[ii,kk]
+    return clusterA
+
+d = int(np.max(cluster))
+pos = np.zeros((1,d))
+for rr in range(1,d):
+    a = area(cluster,diffzml,diffxml, rr)
+    pos[:,rr] = a
+ll = np.argmax(pos)
+b = cluster_reduction(cluster,transfer[2], ll, diffzml, diffxml)
