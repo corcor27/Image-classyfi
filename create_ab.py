@@ -215,6 +215,4 @@ for k in range(0,LMLO[1]):
     for j in range(0, CC[1]):
         for i in range(0, 500):
             if CC[0][j,i] > 0 and LMLO[0][k,i] > 0:
-                
-
-                
+print("hello")
