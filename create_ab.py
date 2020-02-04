@@ -219,9 +219,9 @@ for k in range(0,LMLO[1]):
 x = []
 y = []
 z = []
-for k in range(0, diffzml):
-    for j in range(0, diffycc):
-        for i in range(0, diffxml):
+for k in range(0, LMLO[1]):
+    for j in range(0, CC[1]):
+        for i in range(0, 500):
             if dimesional_array[i,j,k] == 1:
                 x.append(i)
                 y.append(j)
