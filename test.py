@@ -77,3 +77,5 @@ from tqdm import tqdm
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 from torchvision import transforms as T
 from torchvision.transforms import functional as F
+
+print("all good")
